@@ -1,24 +1,22 @@
 <template>
-  <div class="row">
-    <div class="col s6 offset-s3">
-      <h1>Create task</h1>
-      <form @submit.prevent="submitHandler">
-        <div class="input-field">
-          <input v-model="title" id="title" type="text" class="validate" required />
-          <label for="title">Title</label>
-          <span class="helper-text" data-error="title is required"></span>
-        </div>
-        <div class="chips" ref="chips"></div>
+  <div class="wrapper_create_task">
+    <h2>Create task</h2>
+    <form @submit.prevent="submitHandler">
+      <div class="input-field">
+        <input v-model="title" id="title" type="text" class="validate" required />
+        <label for="title">Title</label>
+        <span class="helper-text" data-error="title is required"></span>
+      </div>
+      <div class="chips" ref="chips"></div>
 
-        <div class="input-field">
-          <textarea v-model="description" id="description" class="materialize-textarea"></textarea>
-          <label for="description">Description</label>
-          <span class="character-counter" style="float: right; font-size: 12px">{{ description.length }}/2048</span>
-        </div>
-        <input type="text" ref="datepicker" />
-        <button class="btn" type="submit">Create task</button>
-      </form>
-    </div>
+      <div class="input-field">
+        <textarea v-model="description" id="description" class="materialize-textarea"></textarea>
+        <label for="description">Description</label>
+        <span class="character-counter" style="float: right; font-size: 12px">{{ description.length }}/2048</span>
+      </div>
+      <input type="text" ref="datepicker" />
+      <button class="btn" type="submit">Create task</button>
+    </form>
   </div>
 </template>
 
@@ -62,9 +60,16 @@
     };
 
     rootStore.setTasks(task);
-    router.push('/list')
+    router.push('/list');
   };
 
   onMounted(getChips);
   onMounted(getDatepicker);
 </script>
+
+<style lang="scss">
+  .wrapper_create_task {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+</style>

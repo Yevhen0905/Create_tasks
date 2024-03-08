@@ -1,7 +1,8 @@
 <template>
-  <div class="row">
-    <div v-if="task" class="col s6 offset-s3">
-      <h1>{{ task.title }}</h1>
+  <div>
+    <div v-if="task" class="wrapper_create_task">
+      <h2 class="task">TASK</h2>
+      <h3>{{ task.title }}</h3>
       <form @submit.prevent="submitHandler">
         <div class="chips" ref="chips"></div>
 
@@ -11,7 +12,8 @@
           <span class="character-counter" style="float: right; font-size: 12px">{{ description.length }}/2048</span>
         </div>
         <input type="text" ref="datepicker" />
-        <button class="btn" type="submit">Update</button>
+        <button class="btn update" type="submit">Update</button>
+        <button class="btn blue" @click="completeTask">Complete task</button>
       </form>
     </div>
     <div v-else>task not found</div>
@@ -45,7 +47,7 @@
   const getDatepicker = () => {
     date.value = M.Datepicker.init(datepicker.value, {
       format: 'dd.mm.yyyy',
-      defaultDate: new Date(),
+      defaultDate: new Date(task.value.date),
       setDefaultDate: true
     });
   };
@@ -57,7 +59,16 @@
   }, 0);
 
   const submitHandler = async () => {
-    rootStore.setTasks(task);
+    rootStore.updateTask({
+      id: task.value.id,
+      description: description.value,
+      date: date.value.date
+    });
+    router.push('/list');
+  };
+
+  const completeTask = () => {
+    rootStore.completeTask(task.value.id);
     router.push('/list');
   };
 
@@ -66,4 +77,17 @@
   onMounted(getDescription);
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+  .update {
+    margin-right: 20px;
+  }
+
+  .task {
+    border-bottom: 1px solid;
+    display: inline-block;
+  }
+
+  .materialize-textarea {
+    height: 100%;
+  }
+</style>
