@@ -10,6 +10,21 @@
 <script setup>
   import {RouterView} from 'vue-router';
   import Navbar from './components/Navbar.vue';
+
+  import {watch} from 'vue';
+  import {storeToRefs} from 'pinia';
+  import {useRootStore} from './stores';
+
+  const rootStore = useRootStore();
+  const {tasks} = storeToRefs(rootStore);
+
+  watch(
+    tasks,
+    (val) => {
+      localStorage.setItem('tasks', JSON.stringify(val));
+    },
+    {deep: true}
+  );
 </script>
 
 <style lang="scss">

@@ -12,7 +12,6 @@ export const useRootStore = defineStore('tasks', {
   actions: {
     setTasks(val) {
       this.tasks.push(val);
-      return localStorage.setItem('tasks', JSON.stringify(this.tasks));
     },
     updateTask({id, description, date}) {
       const tasks = this.tasks;
@@ -25,16 +24,13 @@ export const useRootStore = defineStore('tasks', {
       tasks[index] = {...task, date: date, description: description, status};
 
       this.tasks = tasks;
-      return localStorage.setItem('tasks', JSON.stringify(this.tasks));
     },
     completeTask(id) {
       const index = this.tasks.findIndex((t) => t.id === id);
       this.tasks[index].status = 'completed';
-      return localStorage.setItem('tasks', JSON.stringify(this.tasks));
     },
     deleteTask(id) {
-        this.tasks = this.tasks.filter(task => task.id !== id)
-        return localStorage.setItem('tasks', JSON.stringify(this.tasks));
+      this.tasks = this.tasks.filter((task) => task.id !== id);
     }
   },
   getters: {
