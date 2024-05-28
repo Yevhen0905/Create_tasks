@@ -7,9 +7,15 @@
         <div class="chips" ref="chips"></div>
 
         <div class="input-field">
-          <textarea v-model="description" id="description" class="materialize-textarea"></textarea>
+          <textarea
+            v-model="description"
+            id="description"
+            class="materialize-textarea"
+          ></textarea>
           <label for="description">Description</label>
-          <span class="character-counter" style="float: right; font-size: 12px">{{ description.length }}/2048</span>
+          <span class="character-counter" style="float: right; font-size: 12px"
+            >{{ description.length }}/2048</span
+          >
         </div>
         <input type="text" ref="datepicker" />
         <button class="btn update" type="submit">Update</button>
@@ -20,61 +26,87 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import {computed, ref, onMounted} from 'vue';
   import {useRootStore} from '@/stores';
   import {useRoute, useRouter} from 'vue-router';
+  import M from 'materialize-css';
 
-  const chips = ref(null);
-  const datepicker = ref(null);
-  const description = ref('');
-  const chipsData = ref(null);
-  const date = ref(null);
+  interface Task {
+    id: number;
+    title: string;
+    description: string;
+    date: string;
+    status: 'active' | 'outdated' | 'completed';
+    tags: Array<{tag: string}>;
+  }
+
+  const chips = ref<HTMLElement | null>(null);
+  const datepicker = ref<HTMLElement | null>(null);
+  const description = ref<string>('');
+  const chipsData = ref<any>(null);
+  const date = ref<any>(null);
 
   const rootStore = useRootStore();
   const route = useRoute();
   const router = useRouter();
 
-  const task = computed(() => rootStore.getTasksById(Number(route.params.id)));
+  const task = computed<Task | undefined>(() =>
+    rootStore.getTasksById(Number(route.params.id))
+  );
 
   const getChips = () => {
-    chipsData.value = M.Chips.init(chips.value, {
-      placeholder: 'Task tags',
-      data: task.value.tags
-    });
+    if (task.value && chips.value) {
+      chipsData.value = M.Chips.init(chips.value, {
+        placeholder: 'Task tags',
+        data: task.value.tags
+      });
+    }
   };
 
   const getDatepicker = () => {
-    date.value = M.Datepicker.init(datepicker.value, {
-      format: 'dd.mm.yyyy',
-      defaultDate: new Date(task.value.date),
-      setDefaultDate: true
-    });
+    if (task.value && datepicker.value) {
+      date.value = M.Datepicker.init(datepicker.value, {
+        format: 'dd.mm.yyyy',
+        defaultDate: new Date(task.value.date),
+        setDefaultDate: true
+      });
+    }
   };
 
-  const getDescription = () => (description.value = task.value.description);
+  const getDescription = () => {
+    if (task.value) {
+      description.value = task.value.description;
+    }
+  };
 
   setTimeout(() => {
     M.updateTextFields();
   }, 0);
 
   const submitHandler = async () => {
-    rootStore.updateTask({
-      id: task.value.id,
-      description: description.value,
-      date: date.value.date
-    });
-    router.push('/list');
+    if (task.value && date.value) {
+      rootStore.updateTask({
+        id: task.value.id,
+        description: description.value,
+        date: date.value.date
+      });
+      router.push('/list');
+    }
   };
 
   const completeTask = () => {
-    rootStore.completeTask(task.value.id);
-    router.push('/list');
+    if (task.value) {
+      rootStore.completeTask(task.value.id);
+      router.push('/list');
+    }
   };
 
-  onMounted(getChips);
-  onMounted(getDatepicker);
-  onMounted(getDescription);
+  onMounted(() => {
+    getChips();
+    getDatepicker();
+    getDescription();
+  });
 </script>
 
 <style lang="scss">

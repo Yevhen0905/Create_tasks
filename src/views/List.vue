@@ -46,34 +46,36 @@
   </div>
 </template>
 
-<script setup>
-  import {ref, computed, onMounted} from 'vue';
-  import {useRootStore} from '@/stores';
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue';
+import { useRootStore } from '@/stores';
 
-  const select = ref(null);
-  const filter = ref(null);
+const select = ref<HTMLElement | null>(null);
+const filter = ref<string | null>(null);
 
-  const rootStore = useRootStore();
+const rootStore = useRootStore();
 
-  const tasks = computed(() => rootStore.getTasks);
-  const filterTasksByStatus = computed(() => {
-    return tasks.value.filter((t) => {
-      if (!filter.value) {
-        return true;
-      }
-      return t.status === filter.value;
-    });
+const tasks = computed(() => rootStore.getTasks);
+const filterTasksByStatus = computed(() => {
+  return tasks.value.filter((t) => {
+    if (!filter.value) {
+      return true;
+    }
+    return t.status === filter.value;
   });
+});
 
-  const filterInit = () => {
+const filterInit = () => {
+  if (select.value) {
     M.FormSelect.init(select.value);
-  };
+  }
+};
 
-  const deleteTask = (id) => {
-    rootStore.deleteTask(id);
-  };
+const deleteTask = (id: number) => {
+  rootStore.deleteTask(id);
+};
 
-  onMounted(filterInit);
+onMounted(filterInit);
 </script>
 
 <style lang="scss">
